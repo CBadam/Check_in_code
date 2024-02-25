@@ -26,7 +26,7 @@ if not cap.isOpened():
     cap = cv2.VideoCapture(1)
     if not cap.isOpened():
         # Neither index 0 nor index 1 worked
-        raise ValueError("Unable to open video capture device.")
+        st.error("Unable to open video capture device.")
 
 # ************************************ Functions ************************************
 

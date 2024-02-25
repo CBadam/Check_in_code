@@ -4,6 +4,9 @@ from pyzbar.pyzbar import decode
 import cv2
 import streamlit as st
 import pandas as pd
+from streamlit_webrtc import VideoTransformerBase, webrtc_streamer
+
+
 
 
 st.set_page_config(page_title="Check in",
@@ -13,6 +16,22 @@ st.set_page_config(page_title="Check in",
 # ************************************ Variables ************************************
 
 # Chemin vers la liste des participants (fichier csv)
+
+
+class VideoTransformer(VideoTransformerBase):
+    def __init__(self):
+        self.threshold1 = 100
+        self.threshold2 = 200
+
+    def transform(self, frame):
+        img = frame.to_ndarray(format="bgr24")
+
+        img = cv2.cvtColor(
+            cv2.Canny(img, self.threshold1, self.threshold2), cv2.COLOR_GRAY2BGR
+        )
+
+        return img
+
 
 if "csv_file_path" not in st.session_state:
     st.session_state.csv_file_path ='Attendees.csv'
@@ -122,5 +141,10 @@ if __name__ == "__main__":
     frame_placeholder=st.empty()
     st.write(st.session_state.attendees_df)
     #generate_qr_code(attendees_data)
-    if start_recording:
-        on_qr_scan(frame_placeholder)
+    #if start_recording:
+        #on_qr_scan(frame_placeholder)
+    ctx = webrtc_streamer(key="example", video_transformer_factory=VideoTransformer)
+
+    if ctx.video_transformer:
+        ctx.video_transformer.threshold1 = st.slider("Threshold1", 0, 1000, 100)
+        ctx.video_transformer.threshold2 = st.slider("Threshold2", 0, 1000, 200)

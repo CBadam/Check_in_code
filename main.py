@@ -39,7 +39,7 @@ def generate_qr_code(data):
         print(f"QR code generated for {attendee['Name']} {attendee['Last Name']}")
 
 # Fonction pour gérer l'événement de numérisation du code QR
-def on_qr_scan(cap,frame_placeholder):
+def on_qr_scan(frame_placeholder):
     while True:
         cap = cv2.VideoCapture(0)
         if not cap.isOpened():

@@ -20,13 +20,7 @@ if "csv_file_path" not in st.session_state:
 if "attendees_df" not in st.session_state:
     st.session_state.attendees_df =pd.read_csv(st.session_state.csv_file_path)
 
-cap = cv2.VideoCapture(0)
-if not cap.isOpened():
-    # If index 0 fails, try index 1
-    cap = cv2.VideoCapture(1)
-    if not cap.isOpened():
-        # Neither index 0 nor index 1 worked
-        st.error("Unable to open video capture device.")
+
 
 # ************************************ Functions ************************************
 
@@ -47,6 +41,13 @@ def generate_qr_code(data):
 # Fonction pour gérer l'événement de numérisation du code QR
 def on_qr_scan(cap,frame_placeholder):
     while True:
+        cap = cv2.VideoCapture(0)
+        if not cap.isOpened():
+            # If index 0 fails, try index 1
+            cap = cv2.VideoCapture(1)
+            if not cap.isOpened():
+                # Neither index 0 nor index 1 worked
+                st.error("Unable to open video capture device.")
         ret, frame = cap.read()
         colors = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         frame_placeholder.image(colors,channels="RGB",width=500)
@@ -122,4 +123,4 @@ if __name__ == "__main__":
     st.write(st.session_state.attendees_df)
     #generate_qr_code(attendees_data)
     if start_recording:
-        on_qr_scan(cap,frame_placeholder)
+        on_qr_scan(frame_placeholder)
